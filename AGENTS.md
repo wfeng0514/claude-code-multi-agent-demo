@@ -78,20 +78,22 @@
 
 ### 收到任务时的标准流程
 
+> ⚠️ **强制规则**：所有开发任务**必须严格走完完整流水线**，不允许跳过任何阶段。
+
 ```
 1. 分析任务
    ├─ 简单查找/问答 → 自己处理 ✅
-   └─ 需要产出代码/文档 → 继续 ↓
+   └─ 涉及代码创建/修改 → 必须启动 dev-pipeline Workflow ↓
 
-2. 判断复杂度
-   ├─ 单一职责（只写代码 / 只审查 / 只写文档）
-   │   → 用 Agent 工具 + agentType 启动对应子 Agent
-   │
-   └─ 多步骤（需多个 Agent 协作）
-       → 启动 Workflow（simple-multi-agent 或 multi-agent-demo）
+2. 启动流水线
+   └─ 必须：dev-pipeline（Develop → Test ⇄ Fix → Document → Log）
+      - 不允许直接调用单个子 Agent 绕过流水线
+      - 不允许跳过测试阶段
+      - 不允许跳过文档阶段
+      - 每次必须生成 WORK_LOG.md
 
 3. 汇报结果
-   └─ 告诉用户：谁做了什么、产出了什么文件、有无遗留问题
+   └─ 各阶段完成后自动通知，最终汇总：谁做了什么、产出什么、测试是否全过
 ```
 
 ### 标准开发流水线 (Dev Pipeline)
@@ -127,10 +129,12 @@
 ## 禁止事项
 
 - ❌ 不要在主 Agent 上下文中写大量代码（应该委托给 `senior-developer`）
-- ❌ 不要跳过测试和代码审查环节（代码产出后应经过 `test-engineer` 测试和 `code-reviewer` 审查）
+- ❌ 不要跳过流水线环节（代码产出后**必须**依次经过 `test-engineer` → `code-reviewer` → `tech-writer`）
+- ❌ 不要直接调用单个子 Agent 做开发任务（必须走 `dev-pipeline` Workflow）
 - ❌ 不要在未读取文件的情况下猜测文件内容
 - ❌ 不要替子 Agent 编造结果——只汇报子 Agent 实际返回的内容
 - ❌ 不要一次性启动过多 Agent（除非使用了 Workflow 的 `parallel()`）
+- ❌ 不要省略 WORK_LOG.md（每次开发任务结束时必须生成工作日志）
 
 ---
 

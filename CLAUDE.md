@@ -41,9 +41,10 @@ multi-agent-demo/
 
 ## 约定
 
-- 子 Agent 产出的代码、文档、日志均写入本项目目录下
-- 每次运行 Workflow 后检查 `WORK_LOG.md` 了解各 Agent 的工作内容
-- 新建 Agent 身份只需在 `.claude/agents/` 下加 `.md` 文件，写法参照已有的三个
+- ⚠️ **强制流水线**：所有开发任务**必须**通过 `dev-pipeline` Workflow 执行，严格走完 5 个阶段（Develop → Test ⇄ Fix → Document → Log），不允许跳过任何阶段或直接调用单个子 Agent
+- 子 Agent 产出的代码、文档、日志均写入 `outputs/<task-slug>/` 目录下
+- 每次任务**必须**生成 `WORK_LOG.md`，记录每个 Agent 的工作内容和测试结果
+- 新建 Agent 身份只需在 `.claude/agents/` 下加 `.md` 文件，写法参照已有文件
 - 新建 Workflow 只需在 `.claude/workflows/` 下加 `.js` 文件，必须包含 `export const meta = { name, description, phases }`
 
 ## 语言和框架
