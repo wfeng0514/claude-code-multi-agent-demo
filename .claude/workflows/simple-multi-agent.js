@@ -7,6 +7,20 @@ export const meta = {
   ],
 }
 
+// ============================================================
+// Derive task folder name from args.task, fallback to "default-demo"
+// ============================================================
+const taskSlug = (args.task || 'default-demo')
+  .replace(/[^a-zA-Z0-9一-鿿_-]/g, '-')
+  .replace(/-+/g, '-')
+  .replace(/^-|-$/g, '')
+  .slice(0, 60) || 'task-run';
+
+const outDir = `outputs/${taskSlug}`;
+
+log(`📁 输出目录: ${outDir}/`);
+
+// ============================================================
 phase('Execute')
 
 // Launch all 3 specialist agents IN PARALLEL
@@ -16,18 +30,21 @@ const [codeResult, reviewResult, docResult] = await parallel([
   () => agent(
     `You are a **Senior Developer** specializing in writing clean, well-tested code.
 
-**Task:** Create a file at src/utils.ts
-that exports these utility functions:
-- \`formatDate(date: Date, format: string): string\` — format a date with patterns like "YYYY-MM-DD"
-- \`slugify(text: string): string\` — convert text to a URL-friendly slug
-- \`chunk<T>(arr: T[], size: number): T[][]\` — split an array into chunks of the given size
+**输出目录:** ${outDir}/
+
+**Task:** Create the following files:
+
+1. **${outDir}/src/utils.ts** — export these utility functions:
+   - \`formatDate(date: Date, format: string): string\` — format a date with patterns like "YYYY-MM-DD"
+   - \`slugify(text: string): string\` — convert text to a URL-friendly slug
+   - \`chunk<T>(arr: T[], size: number): T[][]\` — split an array into chunks of the given size
 
 Write complete, production-ready TypeScript with JSDoc comments and error handling.
-Use the Write tool to create the file.`,
+Use the Write tool to create the file (creates parent directories automatically).`,
     { label: 'dev:utils', phase: 'Execute', agentType: 'senior-developer' }
   ),
 
-  // Agent 2: Code Reviewer - audits a hypothetical codebase
+  // Agent 2: Code Reviewer - audits a hypothetical codebase AND writes findings to file
   () => agent(
     `You are a **Code Reviewer**.
 
@@ -63,7 +80,9 @@ export class UserService {
 \`\`\`
 
 Identify ALL issues: bugs, missing validation, edge cases, type safety gaps, etc.
-Use the standard review format (🔴 Critical / 🟡 Warning / 🔵 Suggestion).`,
+Use the standard review format (🔴 严重 / 🟡 警告 / 🔵 建议).
+
+**重要:** 审查完成后，使用 Write 工具将完整审查报告写入 **${outDir}/REVIEW.md**。`,
     { label: 'review:user-service', phase: 'Execute', agentType: 'code-reviewer' }
   ),
 
@@ -71,7 +90,9 @@ Use the standard review format (🔴 Critical / 🟡 Warning / 🔵 Suggestion).
   () => agent(
     `You are a **Technical Writer**.
 
-**Task:** Create a file at README.md
+**输出目录:** ${outDir}/
+
+**Task:** Create a file at **${outDir}/README.md**
 
 This is for a project called "multi-agent-demo" — a demonstration of how to use multiple
 specialized AI agents coordinated by a main agent to develop, review, and document code.
@@ -109,7 +130,7 @@ ${reviewResult || '(no output)'}
 ${docResult || '(no output)'}
 --- END ---
 
-**Your job:** Create a synthesis document at SYNTHESIS.md that:
+**Your job:** Create a synthesis document at **${outDir}/SYNTHESIS.md** that:
 1. Summarizes what each agent did
 2. Evaluates the quality of each agent's output
 3. Notes any follow-up actions needed
@@ -123,26 +144,26 @@ log('📊 Synthesis complete')
 
 // Also write the work log
 const logResult = await agent(
-  `Create a detailed work log at WORK_LOG.md
+  `Create a detailed work log at **${outDir}/WORK_LOG.md**
 
 This was a multi-agent development session. The agents involved:
 
 | Agent | Role | What they did |
 |-------|------|---------------|
-| Senior Developer | dev:utils | Created src/utils.ts with utility functions |
-| Code Reviewer | review:user-service | Reviewed src/user-service.ts for issues |
-| Tech Writer | writer:readme | Created README.md |
-| Coordinator | coordinator:synthesize | Synthesized all outputs into SYNTHESIS.md |
+| Senior Developer | dev:utils | Created ${outDir}/src/utils.ts with utility functions |
+| Code Reviewer | review:user-service | Reviewed src/user-service.ts, wrote ${outDir}/REVIEW.md |
+| Tech Writer | writer:readme | Created ${outDir}/README.md |
+| Coordinator | coordinator:synthesize | Synthesized all outputs into ${outDir}/SYNTHESIS.md |
 
 Write a comprehensive work log in markdown with:
 - Session metadata (date, purpose, agents)
 - Per-agent activity log with timestamps (use the current time as reference)
-- Files created/modified
+- Files created/modified (all under ${outDir}/)
 - Key decisions and outcomes
 - The coordinator's synthesis summary
 
-Use the Write tool to create the file at the path above.`,
+Use the Write tool to create the file.`,
   { label: 'logger:work-log', phase: 'Synthesize' }
 )
 
-return { codeResult, reviewResult, docResult, summary, logResult }
+return { taskSlug, outDir, codeResult, reviewResult, docResult, summary, logResult }

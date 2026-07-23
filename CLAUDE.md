@@ -34,7 +34,7 @@ multi-agent-demo/
 ├── .claude/
 │   ├── agents/                  ← Agent 身份定义
 │   └── workflows/               ← Workflow 编排脚本
-└── src/                         ← Agent 产出目录
+└── outputs/                     ← Agent 产出目录（每次任务一个子文件夹）
 ```
 
 ## 约定

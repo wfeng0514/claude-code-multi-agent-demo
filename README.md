@@ -60,7 +60,13 @@
 │
 └── multi-agent-demo/                     # ★ 演示输出目录
     ├── README.md                         #   你正在读的文件
-    └── src/                              #   子 Agent 生成的代码放在这里
+    └── outputs/                          #   子 Agent 产出（每次任务一个子文件夹）
+        ├── default-demo/                 #     示例：默认任务
+        │   ├── src/                      #     代码实现
+        │   ├── README.md                 #     文档
+        │   ├── REVIEW.md                 #     审查报告
+        │   └── WORK_LOG.md               #     工作日志
+        └── websocket-chat/               #     示例：另一个任务...
 ```
 
 ### 三层架构
@@ -233,7 +239,7 @@ run the simple-multi-agent workflow
 
 # 或者直接使用 Agent 工具
 用 senior-developer 身份写一个 LRU Cache
-用 code-reviewer 审查 src/auth.ts
+用 code-reviewer 审查 outputs/task-name/src/auth.ts
 ```
 
 ### 方式二：`/workflows` 命令
@@ -314,21 +320,22 @@ client.beta.sessions.events.send(
 | Agent | 身份 | 阶段 | 工作摘要 | 产出文件 |
 |-------|------|------|----------|----------|
 | coordinator:plan | 协调员 | Plan | 制定开发计划 | — |
-| developer:implement | 高级工程师 | Develop | 实现 API 端点 | src/server.ts |
-| reviewer:audit | 代码审查员 | Review | 发现 3 个问题 | — |
-| writer:document | 技术文档师 | Document | 写 README | README.md |
-| logger:summarize | 日志员 | Log | 生成本日志 | WORK_LOG.md |
+| developer:implement | 高级工程师 | Develop | 实现 API 端点 | outputs/task-name/src/server.ts |
+| reviewer:audit | 代码审查员 | Review | 发现 3 个问题 | outputs/task-name/REVIEW.md |
+| writer:document | 技术文档师 | Document | 写 README | outputs/task-name/README.md |
+| logger:summarize | 日志员 | Log | 生成本日志 | outputs/task-name/WORK_LOG.md |
 
 ## Timeline
-1. 14:30 — 协调员制定计划
+1. 14:30 — 协调员制定计划 → outputs/task-name/PLAN.md
 2. 14:31 — 开发工程师开始编码
 3. 14:35 — 代码审查开始
 ...
 
 ## Artifacts Produced
-- src/server.ts
-- README.md
-- WORK_LOG.md
+- outputs/task-name/src/server.ts
+- outputs/task-name/README.md
+- outputs/task-name/REVIEW.md
+- outputs/task-name/WORK_LOG.md
 ```
 
 ---

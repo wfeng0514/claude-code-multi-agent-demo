@@ -16,9 +16,21 @@ export const meta = {
 // This workflow demonstrates the "main agent coordinates specialists" pattern:
 //   1. Main agent (this script + phase structure) acts as the coordinator
 //   2. Specialist sub-agents do the actual work
-//   3. A final agent generates a log of who did what
+//   3. All outputs are saved under outputs/<task-slug>/
 // ============================================================
 
+// Derive task folder name from args.task, fallback to "default-demo"
+const taskSlug = (args.task || 'default-demo')
+  .replace(/[^a-zA-Z0-9一-鿿_-]/g, '-')
+  .replace(/-+/g, '-')
+  .replace(/^-|-$/g, '')
+  .slice(0, 60) || 'task-run';
+
+const outDir = `outputs/${taskSlug}`;
+
+log(`📁 输出目录: ${outDir}/`);
+
+// ============================================================
 phase('Plan')
 
 // Step 1: The main "coordinator" agent analyzes the task and creates a work plan
@@ -32,11 +44,13 @@ Analyze this request and create a detailed work plan with these sections:
 2. Who should do what (which specialist to assign each part to)
 3. Acceptance criteria
 
-Keep it concise. This plan will be passed to specialist agents.`,
+Keep it concise. This plan will be passed to specialist agents.
+
+**重要:** 计划完成后，使用 Write 工具将完整计划写入 **${outDir}/PLAN.md**。`,
   { label: 'coordinator:plan', phase: 'Plan' }
 )
 
-log(`📋 Work plan created by coordinator:\n${plan}`)
+log(`📋 Work plan created by coordinator`);
 
 // ============================================================
 phase('Develop')
@@ -55,7 +69,7 @@ ${plan}
 - Write complete, production-ready code
 - Include error handling
 - Use **${args.language || 'TypeScript'}** with **${args.framework || 'Express.js'}**
-- Output ALL files needed - use the Write tool to create them in the current project directory
+- Output ALL files needed — use the Write tool to create them under **${outDir}/src/**
 
 Create the implementation now.`,
   {
@@ -65,7 +79,7 @@ Create the implementation now.`,
   }
 )
 
-log(`💻 Developer completed implementation`)
+log(`💻 Developer completed implementation`);
 
 // ============================================================
 phase('Review')
@@ -81,9 +95,11 @@ ${code}
 --- END ---
 
 **Instructions:**
-1. Read the actual files that were created in the current project directory
+1. Read the actual files that were created under ${outDir}/src/
 2. Review them thoroughly for bugs, security issues, and improvements
-3. Output your findings in the standard review format`,
+3. Use the standard review format (🔴 严重 / 🟡 警告 / 🔵 建议)
+
+**重要:** 审查完成后，使用 Write 工具将完整审查报告写入 **${outDir}/REVIEW.md**。`,
   {
     label: 'reviewer:audit',
     phase: 'Review',
@@ -91,7 +107,7 @@ ${code}
   }
 )
 
-log(`🔍 Code review completed`)
+log(`🔍 Code review completed`);
 
 // ============================================================
 phase('Document')
@@ -109,10 +125,10 @@ ${code}
 ${review}
 --- END ---
 
-**Create the following documentation files in the current project directory:**
+**Create the following documentation files under ${outDir}/:**
 
-1. **README.md** - Project overview, quick start, usage examples
-2. **ARCHITECTURE.md** - System design, data flow, key decisions
+1. **README.md** — Project overview, quick start, usage examples
+2. **ARCHITECTURE.md** — System design, data flow, key decisions
 
 Write the files using the Write tool.`,
   {
@@ -122,7 +138,7 @@ Write the files using the Write tool.`,
   }
 )
 
-log(`📝 Documentation created`)
+log(`📝 Documentation created`);
 
 // ============================================================
 phase('Log')
@@ -149,24 +165,24 @@ ${docs}
 
 --- END DATA ---
 
-**Create the work log file at WORK_LOG.md in the current project directory** with these sections:
+**使用 Write 工具将工作日志写入 ${outDir}/WORK_LOG.md**，包含以下章节：
 
-1. **Session Overview** - timestamp, task description, agents involved
-2. **Agent Activity Log** - a table with columns: Agent Name | Role | Phase | Summary of Work | Files Touched
-3. **Timeline** - chronological order of what happened
-4. **Artifacts Produced** - list of all files created
-5. **Review Status** - summary of review findings and whether they were addressed
-6. **Next Steps** - what should happen next
-
-Use the Write tool to create the file.`,
+1. **Session Overview** — timestamp, task description, agents involved
+2. **Agent Activity Log** — a table with columns: Agent Name | Role | Phase | Summary of Work | Files Touched
+3. **Timeline** — chronological order of what happened
+4. **Artifacts Produced** — list of all files created (all under ${outDir}/)
+5. **Review Status** — summary of review findings and whether they were addressed
+6. **Next Steps** — what should happen next`,
   { label: 'logger:summarize', phase: 'Log' }
 )
 
-log(`📊 Work log generated at WORK_LOG.md in the current project directory`)
+log(`📊 Work log generated at ${outDir}/WORK_LOG.md`);
 
 // ============================================================
 // Return the complete session summary
 return {
+  taskSlug,
+  outDir,
   plan,
   code,
   review,
