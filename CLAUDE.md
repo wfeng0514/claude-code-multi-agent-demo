@@ -1,5 +1,7 @@
 # multi-agent-demo — Claude Code 项目指令
 
+> ⚠️ **强制要求**：在执行任何操作之前，必须先使用 Read 工具读取 `AGENTS.md` 文件，并严格遵守其中定义的主 Agent 行为准则。AGENTS.md 是本项目的核心约束文件，优先级高于本文件。
+
 ## 项目概述
 
 这是一个演示 Claude Code **多 Agent 协作**模式的示例项目。核心概念：

@@ -45,7 +45,7 @@
 ## 项目文件结构
 
 ```
-/Users/wfeng/Developer/
+项目根目录/
 │
 ├── .claude/                              # Claude Code 配置根目录
 │   │

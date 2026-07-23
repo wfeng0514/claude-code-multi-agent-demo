@@ -16,7 +16,7 @@ const [codeResult, reviewResult, docResult] = await parallel([
   () => agent(
     `You are a **Senior Developer** specializing in writing clean, well-tested code.
 
-**Task:** Create a file at /Users/wfeng/Developer/multi-agent-demo/src/utils.ts
+**Task:** Create a file at src/utils.ts
 that exports these utility functions:
 - \`formatDate(date: Date, format: string): string\` — format a date with patterns like "YYYY-MM-DD"
 - \`slugify(text: string): string\` — convert text to a URL-friendly slug
@@ -71,7 +71,7 @@ Use the standard review format (🔴 Critical / 🟡 Warning / 🔵 Suggestion).
   () => agent(
     `You are a **Technical Writer**.
 
-**Task:** Create a file at /Users/wfeng/Developer/multi-agent-demo/README.md
+**Task:** Create a file at README.md
 
 This is for a project called "multi-agent-demo" — a demonstration of how to use multiple
 specialized AI agents coordinated by a main agent to develop, review, and document code.
@@ -109,7 +109,7 @@ ${reviewResult || '(no output)'}
 ${docResult || '(no output)'}
 --- END ---
 
-**Your job:** Create a synthesis document at /Users/wfeng/Developer/multi-agent-demo/SYNTHESIS.md that:
+**Your job:** Create a synthesis document at SYNTHESIS.md that:
 1. Summarizes what each agent did
 2. Evaluates the quality of each agent's output
 3. Notes any follow-up actions needed
@@ -123,7 +123,7 @@ log('📊 Synthesis complete')
 
 // Also write the work log
 const logResult = await agent(
-  `Create a detailed work log at /Users/wfeng/Developer/multi-agent-demo/WORK_LOG.md
+  `Create a detailed work log at WORK_LOG.md
 
 This was a multi-agent development session. The agents involved:
 

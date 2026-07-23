@@ -55,7 +55,7 @@ ${plan}
 - Write complete, production-ready code
 - Include error handling
 - Use **${args.language || 'TypeScript'}** with **${args.framework || 'Express.js'}**
-- Output ALL files needed - use the Write tool to create them in /Users/wfeng/Developer/multi-agent-demo/
+- Output ALL files needed - use the Write tool to create them in the current project directory
 
 Create the implementation now.`,
   {
@@ -81,7 +81,7 @@ ${code}
 --- END ---
 
 **Instructions:**
-1. Read the actual files that were created in /Users/wfeng/Developer/multi-agent-demo/
+1. Read the actual files that were created in the current project directory
 2. Review them thoroughly for bugs, security issues, and improvements
 3. Output your findings in the standard review format`,
   {
@@ -109,7 +109,7 @@ ${code}
 ${review}
 --- END ---
 
-**Create the following documentation files in /Users/wfeng/Developer/multi-agent-demo/:**
+**Create the following documentation files in the current project directory:**
 
 1. **README.md** - Project overview, quick start, usage examples
 2. **ARCHITECTURE.md** - System design, data flow, key decisions
@@ -149,7 +149,7 @@ ${docs}
 
 --- END DATA ---
 
-**Create the work log file at /Users/wfeng/Developer/multi-agent-demo/WORK_LOG.md** with these sections:
+**Create the work log file at WORK_LOG.md in the current project directory** with these sections:
 
 1. **Session Overview** - timestamp, task description, agents involved
 2. **Agent Activity Log** - a table with columns: Agent Name | Role | Phase | Summary of Work | Files Touched
@@ -162,7 +162,7 @@ Use the Write tool to create the file.`,
   { label: 'logger:summarize', phase: 'Log' }
 )
 
-log(`📊 Work log generated at /Users/wfeng/Developer/multi-agent-demo/WORK_LOG.md`)
+log(`📊 Work log generated at WORK_LOG.md in the current project directory`)
 
 // ============================================================
 // Return the complete session summary
