@@ -15,13 +15,15 @@
 | `agentType` | 文件 | 用途 |
 |---|---|---|
 | `senior-developer` | `.claude/agents/senior-developer.md` | 写代码、架构设计 |
-| `code-reviewer` | `.claude/agents/code-reviewer.md` | 找 bug、安全审查 |
+| `test-engineer` | `.claude/agents/test-engineer.md` | 🆕 写测试、运行测试、报告 bug |
+| `code-reviewer` | `.claude/agents/code-reviewer.md` | 代码审查、安全审计 |
 | `tech-writer` | `.claude/agents/tech-writer.md` | 写文档、README |
 
 ## 可用 Workflow
 
 | Workflow | 说明 | 用法 |
 |---|---|---|
+| `dev-pipeline` | 🆕 标准流水线：开发→测试⇄修复→文档（开发测试分离，自动循环至通过） | `run the dev-pipeline workflow` |
 | `simple-multi-agent` | 3 个专业 Agent 并行工作 + 协调员合成 + 日志 | `run the simple-multi-agent workflow` |
 | `multi-agent-demo` | 5 阶段流水线：Plan → Develop → Review → Document → Log | `run the multi-agent-demo workflow` |
 

@@ -14,9 +14,11 @@
 | 场景 | 委托给 |
 |------|--------|
 | 编写代码、架构设计 | `senior-developer` |
+| 编写测试、运行测试、报告结果 | `test-engineer` |
 | 代码审查、找 bug、安全审计 | `code-reviewer` |
 | 写文档、README、API 文档 | `tech-writer` |
-| 复杂多步骤任务 | 启动一个 Workflow |
+| 复杂多步骤开发任务 | 启动 `dev-pipeline` Workflow |
+| 简单多 Agent 协作 | 启动 `simple-multi-agent` 或 `multi-agent-demo` |
 
 ### 2. 自己动手的场景
 
@@ -92,6 +94,28 @@
    └─ 告诉用户：谁做了什么、产出了什么文件、有无遗留问题
 ```
 
+### 标准开发流水线 (Dev Pipeline)
+
+开发任务必须遵循 **开发与测试分离** 的原则，禁止一个 Agent 同时写代码和测试：
+
+```
+1. Develop   → senior-developer 编写实现代码（不含测试）
+2. Test      → test-engineer 编写测试并运行，报告通过/失败/bug
+3. Fix       → 若失败，senior-developer 根据测试结果修复
+   ↻ 循环    → 回到步骤 2，直至全部通过（最多 5 轮）
+4. Document  → tech-writer 编写项目文档
+5. Log       → 生成 WORK_LOG.md
+```
+
+| Agent | 职责 |
+|-------|------|
+| `senior-developer` | 只写实现代码 + 根据测试失败结果修复 |
+| `test-engineer` | 写测试文件 + 运行测试 + 报告结果和 bug |
+| `code-reviewer` | 审查代码质量、找安全漏洞、推荐改进方案 |
+| `tech-writer` | 全部测试通过后才介入，编写文档 |
+
+> **关键原则**：开发 Agent 不写测试，测试 Agent 不修代码。两者通过主 Agent 协调形成闭环。
+
 ### 与子 Agent 通信
 
 - 给子 Agent 的 prompt 要**具体、有边界**——明确任务、格式、输出位置
@@ -103,7 +127,7 @@
 ## 禁止事项
 
 - ❌ 不要在主 Agent 上下文中写大量代码（应该委托给 `senior-developer`）
-- ❌ 不要跳过代码审查环节（代码产出后应经过 `code-reviewer`）
+- ❌ 不要跳过测试和代码审查环节（代码产出后应经过 `test-engineer` 测试和 `code-reviewer` 审查）
 - ❌ 不要在未读取文件的情况下猜测文件内容
 - ❌ 不要替子 Agent 编造结果——只汇报子 Agent 实际返回的内容
 - ❌ 不要一次性启动过多 Agent（除非使用了 Workflow 的 `parallel()`）
@@ -114,6 +138,7 @@
 
 | 触发词 | Workflow | 用途 |
 |--------|----------|------|
+| `run the dev-pipeline workflow` | dev-pipeline | 🆕 标准开发流水线（开发→测试⇄修复→文档） |
 | `run the simple-multi-agent workflow` | simple-multi-agent | 3 Agent 并行 + 协调员合成 |
 | `run the multi-agent-demo workflow` | multi-agent-demo | 5 阶段流水线（Plan→Develop→Review→Document→Log） |
 
